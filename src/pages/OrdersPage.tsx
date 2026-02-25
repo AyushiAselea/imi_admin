@@ -13,11 +13,27 @@ interface OrderProduct {
   quantity: number;
 }
 
+interface ShippingAddress {
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
 interface Order {
   _id: string;
   user: { _id: string; name: string; email: string } | null;
   products: OrderProduct[];
   totalAmount: number;
+  advanceAmount?: number;
+  remainingAmount?: number;
+  paymentMethod?: string;
+  deliveryPaymentPending?: boolean;
+  shippingAddress?: ShippingAddress | null;
   status: string;
   paymentStatus: string;
   paymentId?: string;
@@ -36,6 +52,13 @@ const paymentColors: Record<string, string> = {
   Pending: "bg-yellow-500/10 text-yellow-400",
   Success: "bg-green-500/10 text-green-400",
   Failed: "bg-red-500/10 text-red-400",
+  Partial: "bg-orange-500/10 text-orange-400",
+};
+
+const methodColors: Record<string, string> = {
+  ONLINE: "bg-blue-500/10 text-blue-400",
+  COD: "bg-amber-500/10 text-amber-400",
+  PARTIAL: "bg-orange-500/10 text-orange-400",
 };
 
 const OrdersPage: React.FC = () => {
@@ -93,6 +116,7 @@ const OrdersPage: React.FC = () => {
                 <th className="px-5 py-3">Customer</th>
                 <th className="px-5 py-3">Products</th>
                 <th className="px-5 py-3">Amount</th>
+                <th className="px-5 py-3">Method</th>
                 <th className="px-5 py-3">Payment</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3">Date</th>
@@ -121,6 +145,15 @@ const OrdersPage: React.FC = () => {
                   </td>
                   <td className="px-5 py-3 font-medium">
                     ₹{o.totalAmount.toFixed(2)}
+                  </td>
+                  <td className="px-5 py-3">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        methodColors[o.paymentMethod || "ONLINE"] ?? ""
+                      }`}
+                    >
+                      {o.paymentMethod || "ONLINE"}
+                    </span>
                   </td>
                   <td className="px-5 py-3">
                     <span
@@ -198,6 +231,18 @@ const OrdersPage: React.FC = () => {
                   <p className="break-all">{selected.user?.email ?? "—"}</p>
                 </div>
                 <div>
+                  <span className="text-gray-500">Payment Method</span>
+                  <p>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        methodColors[selected.paymentMethod || "ONLINE"] ?? ""
+                      }`}
+                    >
+                      {selected.paymentMethod || "ONLINE"}
+                    </span>
+                  </p>
+                </div>
+                <div>
                   <span className="text-gray-500">Payment Status</span>
                   <p>
                     <span
@@ -215,7 +260,50 @@ const OrdersPage: React.FC = () => {
                     {selected.paymentId || "—"}
                   </p>
                 </div>
+                <div>
+                  <span className="text-gray-500">Delivery Payment</span>
+                  <p className="text-xs">
+                    {selected.deliveryPaymentPending ? (
+                      <span className="text-amber-400">₹{(selected.remainingAmount ?? 0).toFixed(2)} pending</span>
+                    ) : (
+                      <span className="text-green-400">Fully paid</span>
+                    )}
+                  </p>
+                </div>
               </div>
+
+              {/* Amount Breakdown */}
+              {(selected.paymentMethod === "PARTIAL" || selected.paymentMethod === "COD") && (
+                <div className="rounded-xl bg-surface/50 border border-surface-border/50 p-3 space-y-1.5">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-500">Total Amount</span>
+                    <span className="font-medium">₹{selected.totalAmount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-500">Advance Paid</span>
+                    <span className="text-green-400 font-medium">₹{(selected.advanceAmount ?? 0).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-500">Remaining (collect on delivery)</span>
+                    <span className="text-amber-400 font-medium">₹{(selected.remainingAmount ?? 0).toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Shipping Address */}
+              {selected.shippingAddress && (
+                <div>
+                  <span className="text-gray-500 block mb-2">Shipping Address</span>
+                  <div className="rounded-xl bg-surface/50 border border-surface-border/50 p-3 text-xs space-y-0.5 text-gray-300">
+                    <p className="font-medium text-white">{selected.shippingAddress.fullName}</p>
+                    <p>{selected.shippingAddress.phone}</p>
+                    <p>{selected.shippingAddress.addressLine1}</p>
+                    {selected.shippingAddress.addressLine2 && <p>{selected.shippingAddress.addressLine2}</p>}
+                    <p>{selected.shippingAddress.city}, {selected.shippingAddress.state} {selected.shippingAddress.postalCode}</p>
+                    <p>{selected.shippingAddress.country}</p>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <span className="text-gray-500 block mb-2">Products</span>
