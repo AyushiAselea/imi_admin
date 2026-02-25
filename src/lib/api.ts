@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// In production (Vercel) set VITE_API_URL to your Render backend URL,
+// e.g. https://imi-backend.onrender.com/api
+// In development the Vite proxy handles /api → localhost:5000
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: import.meta.env.VITE_API_URL || "/api",
 });
 
 // Attach JWT to every request
