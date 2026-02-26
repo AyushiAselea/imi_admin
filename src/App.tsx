@@ -10,6 +10,7 @@ import OrdersPage from "@/pages/OrdersPage";
 import SettingsPage from "@/pages/SettingsPage";
 import UsersPage from "@/pages/UsersPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
+import CartsPage from "@/pages/CartsPage";
 
 const App = () => (
   <AuthProvider>
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="carts" element={<CartsPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="settings" element={<SettingsPage />} />
