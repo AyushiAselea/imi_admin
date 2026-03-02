@@ -450,7 +450,7 @@ const SettingsPage: React.FC = () => {
               </button>
             </div>
             <div className="flex flex-wrap gap-1 mb-1">
-              {["{{name}}","{{productName}}","{{variant}}","{{quantity}}","{{price}}","{{subtotal}}"].map((v) => (
+              {["{{FirstName}}","{{name}}","{{productName}}","{{variant}}","{{quantity}}","{{price}}","{{subtotal}}","{{CheckoutLink}}"].map((v) => (
                 <span key={v} className="px-1.5 py-0.5 rounded bg-surface border border-surface-border text-brand text-[11px] font-mono cursor-default">{v}</span>
               ))}
             </div>
