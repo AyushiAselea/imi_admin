@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
-import { Save, Plus, Trash2 } from "lucide-react";
+import { Save, Plus, Trash2, Mail, ToggleLeft, ToggleRight } from "lucide-react";
+
+interface EmailTemplate {
+  isEnabled: boolean;
+  subject: string;
+  customMessage: string;
+}
+
+interface EmailTemplateSettings {
+  cartEmail: EmailTemplate;
+  orderEmail: EmailTemplate;
+}
 
 interface CustomScript {
   name: string;
@@ -30,7 +41,14 @@ interface SiteSettings {
     facebook: string;
   };
   tracking: TrackingSettings;
+  emailTemplates: EmailTemplateSettings;
 }
+
+const defaultEmailTemplate: EmailTemplate = {
+  isEnabled: true,
+  subject: "",
+  customMessage: "",
+};
 
 const defaultSettings: SiteSettings = {
   siteName: "",
@@ -44,6 +62,10 @@ const defaultSettings: SiteSettings = {
     googleAnalyticsId: "",
     metaInsightsId: "",
     customScripts: [],
+  },
+  emailTemplates: {
+    cartEmail:  { ...defaultEmailTemplate },
+    orderEmail: { ...defaultEmailTemplate },
   },
 };
 
@@ -65,6 +87,10 @@ const SettingsPage: React.FC = () => {
             ...defaultSettings.tracking,
             ...(data.tracking || {}),
             customScripts: data.tracking?.customScripts || [],
+          },
+          emailTemplates: {
+            cartEmail:  { ...defaultEmailTemplate, ...(data.emailTemplates?.cartEmail  || {}) },
+            orderEmail: { ...defaultEmailTemplate, ...(data.emailTemplates?.orderEmail || {}) },
           },
         });
       })
@@ -386,6 +412,150 @@ const SettingsPage: React.FC = () => {
               />
             </div>
           ))}
+        </section>
+
+        {/* Email Templates */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Mail className="w-4 h-4 text-brand" />
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
+              Email Templates
+            </h2>
+          </div>
+          <p className="text-xs text-gray-500 mb-4">
+            Customise the subject line and body message that goes out to customers.
+            Use <code className="bg-surface px-1 rounded text-brand">&#123;&#123;variable&#125;&#125;</code> placeholders — they'll be replaced automatically.
+          </p>
+
+          {/* Cart Email */}
+          <div className="glass rounded-xl p-4 mb-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-sm text-white">🛒 Cart Email</span>
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    emailTemplates: {
+                      ...form.emailTemplates,
+                      cartEmail: { ...form.emailTemplates.cartEmail, isEnabled: !form.emailTemplates.cartEmail.isEnabled },
+                    },
+                  })
+                }
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-brand transition-colors"
+              >
+                {form.emailTemplates.cartEmail.isEnabled
+                  ? <><ToggleRight className="w-5 h-5 text-brand" /> Enabled</>
+                  : <><ToggleLeft  className="w-5 h-5" /> Disabled</>}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1 mb-1">
+              {["{{name}}","{{productName}}","{{variant}}","{{quantity}}","{{price}}","{{subtotal}}"].map((v) => (
+                <span key={v} className="px-1.5 py-0.5 rounded bg-surface border border-surface-border text-brand text-[11px] font-mono cursor-default">{v}</span>
+              ))}
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Subject</label>
+              <input
+                value={form.emailTemplates.cartEmail.subject}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    emailTemplates: {
+                      ...form.emailTemplates,
+                      cartEmail: { ...form.emailTemplates.cartEmail, subject: e.target.value },
+                    },
+                  })
+                }
+                placeholder="e.g. 🛒 {{productName}} is waiting for you!"
+                className="w-full px-3 py-2 rounded-xl bg-surface border border-surface-border text-white placeholder-gray-600 text-sm focus:outline-none focus:border-brand/50"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Message Body</label>
+              <textarea
+                rows={3}
+                value={form.emailTemplates.cartEmail.customMessage}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    emailTemplates: {
+                      ...form.emailTemplates,
+                      cartEmail: { ...form.emailTemplates.cartEmail, customMessage: e.target.value },
+                    },
+                  })
+                }
+                placeholder="e.g. Great choice! You added {{productName}} to your cart."
+                className="w-full px-3 py-2 rounded-xl bg-surface border border-surface-border text-white placeholder-gray-600 text-sm focus:outline-none focus:border-brand/50 resize-none"
+              />
+              <p className="text-[11px] text-gray-600 mt-1">Tip: wrap text in **double asterisks** to make it <strong>bold</strong> in the email.</p>
+            </div>
+          </div>
+
+          {/* Order Confirmation Email */}
+          <div className="glass rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-sm text-white">✅ Order Confirmation Email</span>
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    emailTemplates: {
+                      ...form.emailTemplates,
+                      orderEmail: { ...form.emailTemplates.orderEmail, isEnabled: !form.emailTemplates.orderEmail.isEnabled },
+                    },
+                  })
+                }
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-brand transition-colors"
+              >
+                {form.emailTemplates.orderEmail.isEnabled
+                  ? <><ToggleRight className="w-5 h-5 text-brand" /> Enabled</>
+                  : <><ToggleLeft  className="w-5 h-5" /> Disabled</>}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1 mb-1">
+              {["{{name}}","{{orderId}}","{{total}}","{{paymentMethod}}"].map((v) => (
+                <span key={v} className="px-1.5 py-0.5 rounded bg-surface border border-surface-border text-brand text-[11px] font-mono cursor-default">{v}</span>
+              ))}
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Subject</label>
+              <input
+                value={form.emailTemplates.orderEmail.subject}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    emailTemplates: {
+                      ...form.emailTemplates,
+                      orderEmail: { ...form.emailTemplates.orderEmail, subject: e.target.value },
+                    },
+                  })
+                }
+                placeholder="e.g. ✅ Your order is confirmed | IMI"
+                className="w-full px-3 py-2 rounded-xl bg-surface border border-surface-border text-white placeholder-gray-600 text-sm focus:outline-none focus:border-brand/50"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Message Body</label>
+              <textarea
+                rows={3}
+                value={form.emailTemplates.orderEmail.customMessage}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    emailTemplates: {
+                      ...form.emailTemplates,
+                      orderEmail: { ...form.emailTemplates.orderEmail, customMessage: e.target.value },
+                    },
+                  })
+                }
+                placeholder="e.g. Your order has been placed. We'll ship it soon!"
+                className="w-full px-3 py-2 rounded-xl bg-surface border border-surface-border text-white placeholder-gray-600 text-sm focus:outline-none focus:border-brand/50 resize-none"
+              />
+              <p className="text-[11px] text-gray-600 mt-1">Tip: wrap text in **double asterisks** to make it <strong>bold</strong> in the email.</p>
+            </div>
+          </div>
         </section>
 
         <button
