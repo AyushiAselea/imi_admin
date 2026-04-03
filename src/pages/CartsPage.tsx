@@ -24,6 +24,19 @@ interface CartData {
   updatedAt: string;
 }
 
+const formatVariant = (variant: string) => {
+  if (!variant) return "";
+  const parts = variant.split(" / ");
+  const frameMap: Record<string, string> = { black: "Matte Black", white: "Pearl White", blue: "Ocean Blue" };
+  const glassMap: Record<string, string> = { black: "Black Glass", transparent: "Transparent" };
+  if (parts.length === 2) {
+    const frame = frameMap[parts[0].trim()] || parts[0].trim();
+    const glass = glassMap[parts[1].trim()] || parts[1].trim();
+    return `${frame} / ${glass}`;
+  }
+  return frameMap[parts[0].trim()] || parts[0].trim();
+};
+
 const CartsPage = () => {
   const [carts, setCarts] = useState<CartData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -160,7 +173,7 @@ const CartsPage = () => {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-white truncate">{item.name}</p>
                       {item.variant && (
-                        <p className="text-xs text-gray-500 capitalize">{item.variant}</p>
+                        <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-xs font-medium">{formatVariant(item.variant)}</span>
                       )}
                     </div>
                     <p className="text-xs text-gray-400">×{item.quantity}</p>

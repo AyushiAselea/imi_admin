@@ -44,6 +44,7 @@ interface ShippingAddress {
 interface Order {
   _id: string;
   user: { _id: string; name: string; email: string } | null;
+  guestInfo?: { name?: string; email?: string; phone?: string } | null;
   products: OrderProduct[];
   totalAmount: number;
   advanceAmount?: number;
@@ -147,9 +148,9 @@ const OrdersPage: React.FC = () => {
                   className="border-b border-surface-border/50 hover:bg-surface-hover/40 transition-colors"
                 >
                   <td className="px-5 py-3">
-                    <div className="font-medium">{o.user?.name ?? "—"}</div>
+                    <div className="font-medium">{o.user?.name ?? o.guestInfo?.name ?? "Guest"}</div>
                     <div className="text-xs text-gray-500">
-                      {o.user?.email ?? ""}
+                      {o.user?.email ?? o.guestInfo?.email ?? ""}
                     </div>
                   </td>
                   <td className="px-5 py-3 text-gray-300">
