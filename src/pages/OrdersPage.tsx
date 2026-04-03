@@ -3,6 +3,20 @@ import api from "@/lib/api";
 import toast from "react-hot-toast";
 import { Eye, X } from "lucide-react";
 
+const formatVariant = (variant: string) => {
+  if (!variant) return "";
+  const parts = variant.split(" / ");
+  const frameMap: Record<string, string> = { black: "Matte Black", white: "Pearl White", blue: "Ocean Blue" };
+  const glassMap: Record<string, string> = { black: "Black Glass", transparent: "Transparent" };
+  if (parts.length === 2) {
+    const frame = frameMap[parts[0].trim()] || parts[0].trim();
+    const glass = glassMap[parts[1].trim()] || parts[1].trim();
+    return `${frame} / ${glass}`;
+  }
+  // old single-value format (just frame color)
+  return frameMap[parts[0].trim()] || parts[0].trim();
+};
+
 interface OrderProduct {
   product: {
     _id: string;
@@ -10,7 +24,10 @@ interface OrderProduct {
     price: number;
     image?: string;
   } | null;
+  productName?: string | null;
+  price?: number | null;
   quantity: number;
+  variant?: string;
 }
 
 interface ShippingAddress {
@@ -136,12 +153,18 @@ const OrdersPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-5 py-3 text-gray-300">
-                    {o.products.map((p, i) => (
-                      <span key={i}>
-                        {p.product?.name ?? "Unknown"} × {p.quantity}
-                        {i < o.products.length - 1 ? ", " : ""}
-                      </span>
-                    ))}
+                    {o.products.map((p, i) => {
+                      const name = p.product?.name ?? p.productName ?? "Unknown";
+                      const variant = formatVariant(p.variant || "");
+                      return (
+                        <div key={i} className="leading-tight mb-0.5">
+                          <span>{name} × {p.quantity}</span>
+                          {variant && (
+                            <span className="inline-block ml-1.5 px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-xs font-medium">{variant}</span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </td>
                   <td className="px-5 py-3 font-medium">
                     ₹{o.totalAmount.toFixed(2)}
@@ -307,28 +330,36 @@ const OrdersPage: React.FC = () => {
 
               <div>
                 <span className="text-gray-500 block mb-2">Products</span>
-                {selected.products.map((p, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 py-2 border-b border-surface-border/30 last:border-0"
-                  >
-                    {p.product?.image ? (
-                      <img
-                        src={p.product.image}
-                        className="w-8 h-8 rounded-lg object-cover"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-lg bg-surface-hover" />
-                    )}
-                    <span className="flex-1">
-                      {p.product?.name ?? "Unknown"}
-                    </span>
-                    <span className="text-gray-400">× {p.quantity}</span>
-                    <span>
-                      ₹{((p.product?.price ?? 0) * p.quantity).toFixed(2)}
-                    </span>
-                  </div>
-                ))}
+                {selected.products.map((p, i) => {
+                  const name = p.product?.name ?? p.productName ?? "Unknown";
+                  const unitPrice = p.product?.price ?? p.price ?? 0;
+                  const variant = formatVariant(p.variant || "");
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 py-2 border-b border-surface-border/30 last:border-0"
+                    >
+                      {p.product?.image ? (
+                        <img
+                          src={p.product.image}
+                          className="w-8 h-8 rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-lg bg-surface-hover" />
+                      )}
+                      <div className="flex-1">
+                        <span className="block font-medium">{name}</span>
+                        {variant && (
+                          <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded-md bg-brand/10 text-brand text-xs font-medium">{variant}</span>
+                        )}
+                      </div>
+                      <span className="text-gray-400">× {p.quantity}</span>
+                      <span>
+                        ₹{(unitPrice * p.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="flex justify-between pt-2 border-t border-surface-border font-bold">
