@@ -70,6 +70,7 @@ const paymentColors: Record<string, string> = {
   Success: "bg-green-500/10 text-green-400",
   Failed: "bg-red-500/10 text-red-400",
   Partial: "bg-orange-500/10 text-orange-400",
+  Collected: "bg-teal-500/10 text-teal-400",
 };
 
 const methodColors: Record<string, string> = {
@@ -491,7 +492,7 @@ const OrdersPage: React.FC = () => {
                     onChange={(e) => setEditForm((f) => ({ ...f, paymentStatus: e.target.value }))}
                     className={INPUT}
                   >
-                    {["Pending", "Success", "Failed", "Partial"].map((s) => (
+                    {["Pending", "Success", "Failed", "Partial", "Collected"].map((s) => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
