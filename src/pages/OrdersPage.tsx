@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import toast from "react-hot-toast";
-import { Eye, Pencil, Trash2, X, Save } from "lucide-react";
+import { Eye, Pencil, Trash2, X, Save, CheckCircle2, Circle } from "lucide-react";
 
 const formatVariant = (variant: string) => {
   if (!variant) return "";
@@ -105,6 +105,7 @@ const OrdersPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [collectingId, setCollectingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -117,6 +118,22 @@ const OrdersPage: React.FC = () => {
       .then((res) => setOrders(res.data))
       .catch(() => toast.error("Failed to load orders"))
       .finally(() => setLoading(false));
+  };
+
+  /* ── toggle COD/Partial collected status ── */
+  const toggleCollected = async (o: Order) => {
+    const newStatus = o.paymentStatus === "Collected" ? "Partial" : "Collected";
+    setCollectingId(o._id);
+    try {
+      const { data } = await api.put(`/admin/orders/${o._id}`, { paymentStatus: newStatus });
+      setOrders((prev) => prev.map((x) => (x._id === o._id ? data : x)));
+      if (selected?._id === o._id) setSelected(data);
+      toast.success(newStatus === "Collected" ? "Marked as collected" : "Marked as not collected");
+    } catch {
+      toast.error("Update failed");
+    } finally {
+      setCollectingId(null);
+    }
   };
 
   /* ── quick status update from table row dropdown ── */
@@ -229,6 +246,7 @@ const OrdersPage: React.FC = () => {
                 <th className="px-5 py-3">Amount</th>
                 <th className="px-5 py-3">Method</th>
                 <th className="px-5 py-3">Payment</th>
+                <th className="px-5 py-3">COD Received</th>
                 <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3">Date</th>
                 <th className="px-5 py-3 text-right">Actions</th>
@@ -268,6 +286,24 @@ const OrdersPage: React.FC = () => {
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${paymentColors[o.paymentStatus] ?? ""}`}>
                       {o.paymentStatus}
                     </span>
+                  </td>
+                  <td className="px-5 py-3">
+                    {(o.paymentMethod === "COD" || o.paymentMethod === "PARTIAL") ? (
+                      <button
+                        onClick={() => toggleCollected(o)}
+                        disabled={collectingId === o._id}
+                        title={o.paymentStatus === "Collected" ? "Mark as not collected" : "Mark as collected"}
+                        className="flex items-center gap-1.5 text-xs font-medium disabled:opacity-40 transition-colors"
+                      >
+                        {o.paymentStatus === "Collected" ? (
+                          <><CheckCircle2 className="w-4 h-4 text-teal-400" /><span className="text-teal-400">Collected</span></>
+                        ) : (
+                          <><Circle className="w-4 h-4 text-gray-500" /><span className="text-gray-500">Not yet</span></>
+                        )}
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-600">—</span>
+                    )}
                   </td>
                   <td className="px-5 py-3">
                     <select
