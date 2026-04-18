@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
-import { Package, ShoppingCart, Users, DollarSign, ShoppingBag, AlertTriangle } from "lucide-react";
+import { Package, ShoppingCart, Users, DollarSign, ShoppingBag, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 
 interface Stats {
   totalProducts: number;
@@ -10,6 +10,8 @@ interface Stats {
   revenue: number;
   abandonedCarts: number;
   failedOrders: number;
+  codCollected: number;
+  codPending: number;
 }
 
 const cards = [
@@ -19,6 +21,8 @@ const cards = [
   { key: "revenue" as const, label: "Revenue", icon: DollarSign, color: "text-yellow-400", bg: "bg-yellow-500/10" },
   { key: "abandonedCarts" as const, label: "Abandoned Carts", icon: ShoppingBag, color: "text-orange-400", bg: "bg-orange-500/10" },
   { key: "failedOrders" as const, label: "Failed Payments", icon: AlertTriangle, color: "text-red-400", bg: "bg-red-500/10" },
+  { key: "codCollected" as const, label: "COD/Partial Collected", icon: CheckCircle2, color: "text-teal-400", bg: "bg-teal-500/10" },
+  { key: "codPending" as const, label: "COD/Partial Pending", icon: Clock, color: "text-amber-400", bg: "bg-amber-500/10" },
 ];
 
 const DashboardPage: React.FC = () => {
@@ -46,7 +50,7 @@ const DashboardPage: React.FC = () => {
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         {cards.map(({ key, label, icon: Icon, color, bg }) => (
           <div
             key={key}
