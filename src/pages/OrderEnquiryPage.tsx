@@ -25,7 +25,7 @@ const staticEnquiries: OrderEnquiry[] = [
     _id: "STATIC001",
     id: "STATIC001",
     name: "Rajesh Kumar",
-    email: "rajesh.kumar@email.com",
+    email: "rajeshkumar014@gmail.com",
     product: "IMI Glasses Mark 1",
     variant: "Matte Black / Black Glass",
     quantity: 1,
@@ -37,7 +37,7 @@ const staticEnquiries: OrderEnquiry[] = [
     _id: "STATIC002",
     id: "STATIC002",
     name: "Priya Singh",
-    email: "priya.singh@email.com",
+    email: "priyasingh014@gmail.com",
     product: "IMI Glasses Mark 1",
     variant: "Matte Black / Black Glass",
     quantity: 2,
@@ -49,7 +49,7 @@ const staticEnquiries: OrderEnquiry[] = [
     _id: "STATIC003",
     id: "STATIC003",
     name: "Amit Patel",
-    email: "amit.patel@email.com",
+    email: "amitpatel012@gmail.com",
     product: "IMI Glasses Mark 2",
     variant: "Pearl White / Transparent",
     quantity: 1,
@@ -58,40 +58,16 @@ const staticEnquiries: OrderEnquiry[] = [
     status: "Contacted",
   },
   {
-    _id: "STATIC004",
-    id: "STATIC004",
-    name: "Neha Gupta",
-    email: "neha.gupta@email.com",
-    product: "IMI Glasses Mark 1",
-    variant: "Matte Black / Black Glass",
-    quantity: 3,
-    paymentMethod: "PARTIAL",
-    date: "2026-01-31",
-    status: "New",
-  },
-  {
     _id: "STATIC005",
     id: "STATIC005",
-    name: "Sanjay Verma",
-    email: "sanjay.verma@email.com",
+    name: "Rahul Verma",
+    email: "rahulverma909@gmail.com",
     product: "IMI Glasses Mark 1",
     variant: "Ocean Blue / Black Glass",
     quantity: 1,
     paymentMethod: "Online",
     date: "2026-01-25",
     status: "Not Interested",
-  },
-  {
-    _id: "STATIC006",
-    id: "STATIC006",
-    name: "Ananya Desai",
-    email: "ananya.desai@email.com",
-    product: "IMI Glasses Mark 2",
-    variant: "Matte Black / Black Glass",
-    quantity: 2,
-    paymentMethod: "COD",
-    date: "2026-01-26",
-    status: "Interested",
   },
   {
     _id: "STATIC007",
@@ -331,7 +307,6 @@ const OrderEnquiryPage: React.FC = () => {
                 <th className="px-5 py-3">Qty</th>
                 <th className="px-5 py-3">Payment Method</th>
                 <th className="px-5 py-3">Date</th>
-                <th className="px-5 py-3">Status</th>
                 <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -361,11 +336,6 @@ const OrderEnquiryPage: React.FC = () => {
                   </td>
                   <td className="px-5 py-3 text-gray-400 text-xs">
                     {fmtDate(e.date)}
-                  </td>
-                  <td className="px-5 py-3">
-                    <span className="text-xs bg-gray-500/10 text-gray-300 px-2 py-0.5 rounded-full">
-                      {e.status || "New"}
-                    </span>
                   </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
