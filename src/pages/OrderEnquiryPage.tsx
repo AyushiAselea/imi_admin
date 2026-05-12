@@ -46,7 +46,7 @@ const initialEnquiries: OrderEnquiry[] = [
   },
   {
     id: "ENQ004",
-    name: "",
+    name: "Rahul Gupta",
     email: "rahulgupta7014@email.com",
     product: "IMI Glasses Mark 1",
     variant: "Black",
