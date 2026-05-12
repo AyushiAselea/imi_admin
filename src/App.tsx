@@ -7,6 +7,7 @@ import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
 import ProductsPage from "@/pages/ProductsPage";
 import OrdersPage from "@/pages/OrdersPage";
+import OrderEnquiryPage from "@/pages/OrderEnquiryPage";
 import SettingsPage from "@/pages/SettingsPage";
 import UsersPage from "@/pages/UsersPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="order-enquiries" element={<OrderEnquiryPage />} />
           <Route path="carts" element={<CartsPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
