@@ -14,17 +14,8 @@ interface OrderEnquiry {
 }
 
 const initialEnquiries: OrderEnquiry[] = [
-  {
-    id: "ENQ001",
-    name: "Vedant Bajaj",
-    email: "thegrypx@gmail.com",
-    product: "IMI Glasses Mark 2",
-    variant: "Matte Black / white Glass",
-    quantity: 1,
-    paymentMethod: "Online",
-    date: "2026-02-01",
-  },
-  {
+  
+ {
     id: "ENQ002",
     name: "Nikhil Soni",
     email: "nikhilsoni4121@email.com",
@@ -53,6 +44,16 @@ const initialEnquiries: OrderEnquiry[] = [
     quantity: 1,
     paymentMethod: "PARTIAL",
     date: "2026-02-07",
+  },
+  {
+    id: "ENQ001",
+    name: "Vedant Bajaj",
+    email: "thegrypx@gmail.com",
+    product: "IMI Glasses Mark 2",
+    variant: "Matte Black / white Glass",
+    quantity: 20,
+    paymentMethod: "Online",
+    date: "2026-02-01",
   },
   {
     id: "ENQ005",
